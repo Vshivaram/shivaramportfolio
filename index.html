@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Vattikuti Shivaram - Data Science Portfolio</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Open+Sans&display=swap" rel="stylesheet" />
+
+<!-- AOS CSS -->
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+<style>
+  /* Reset & Base */
+  body, html {
+    margin: 0; padding: 0; height: 100%; font-family: 'Open Sans', sans-serif; overflow-x: hidden;
+    background: #0E1724; color: #fff;
+  }
+  h1,h2,h3 {
+    font-family: 'Poppins', sans-serif; font-weight: 700;
+  }
+
+  /* Entry Splash */
+  #entrySplash {
+    position: fixed; 
+    top: 0; left: 0; width: 100%; height: 100%; 
+    background: #0B5394; 
+    display: flex; flex-direction: column; justify-content: center; align-items: center; 
+    z-index: 9999; 
+    transition: opacity 1s ease;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  #entrySplash.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #entrySplash img#entryPhoto {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 4px solid #FFD700;
+    box-shadow: 0 0 20px #FFD700;
+    object-fit: cover;
+    margin-bottom: 20px;
+  }
+  #entrySplash h1 {
+    font-size: 3.5em;
+    margin: 0;
+    color: #00C4FF;
+    text-shadow: 0 0 15px #00C4FF;
+    text-align: center;
+  }
+  #entrySplash p {
+    font-size: 1.8em;
+    margin-top: 10px;
+    color: #FFD700;
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    #entrySplash img#entryPhoto {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 15px;
+    }
+    #entrySplash h1 {
+      font-size: 2.2em;
+    }
+    #entrySplash p {
+      font-size: 1.2em;
+    }
+  }
+
+  /* Main Content Hidden Initially */
+  #mainContent {
+    display: none;
+  }
+
+  /* After splash hidden, show main */
+  #mainContent.show {
+    display: block;
+  }
+
+  /* Hero */
+  #hero {
+    height: 100vh; position: relative; display: flex; align-items: center; justify-content: center; text-align: center; overflow: hidden;
+    background-color: #0B5394;
+  }
+  #bgCanvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; z-index: 0;
+  }
+  .hero-content {
+    position: relative; z-index: 2; padding: 20px;
+  }
+  .hero-content h1 {
+    font-size: 3em; text-shadow: 0 0 10px #00c4ff, 0 0 20px #00c4ff, 0 0 40px #00c4ff;
+    color: #fff;
+  }
+  .hero-content p {
+    font-size: 1.5em; color: #FFD700; margin-top: 0.25em;
+  }
+  .cta-button {
+    background-color: #FFD700; color: #0E1724; padding: 12px 24px; border: none; border-radius: 6px; font-size: 1.2em; cursor: pointer; margin: 20px 10px 0 0; text-decoration: none; display: inline-block; transition: all 0.3s ease;
+  }
+  .cta-button:hover {
+    background-color: #00C4FF; color: #fff; transform: scale(1.05);
+  }
+
+  /* Sections styling */
+  section {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  #about { background-color: #0B5394; }
+  #skills { background-color: #0E1724; }
+  #projects { background-color: #0B5394; }
+  #certifications { background-color: #0E1724; }
+  #education { background-color: #0B5394; }
+  #volunteering { background-color: #0E1724; }
+  #contact { background-color: #0B5394; }
+
+  /* Skill Bars */
+  .skill-bar {
+    background-color: #333;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  .skill-progress {
+    background-color: #00C4FF;
+    height: 20px;
+    border-radius: 5px;
+    width: 0;
+    transition: width 2s ease-in-out;
+  }
+
+  /* Projects */
+  .project-card {
+    background-color: #0E1724;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    flex: 1 1 300px;
+  }
+  .project-card:hover {
+    transform: scale(1.05);
+  }
+  #projects > div {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Modals */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-content {
+    background-color: #0B5394;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 80%;
+    color: #fff;
+  }
+  .close {
+    color: #fff;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  /* Forms */
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  input, textarea {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+  }
+
+  /* Footer */
+  footer {
+    background-color: #0B5394;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    #bgCanvas { display: none; }
+    .cta-button, input, textarea { font-size: 1em; }
+    .project-card {
+      flex: 1 1 100%;
+      margin: 10px 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Entry Splash -->
+<div id="entrySplash">
+  <img src="your-photo.jpg" alt="Vattikuti Shivaram" id="entryPhoto" />
+  <h1>Hi there, I'm <span style="color:#FFD700;">Vattikuti Shivaram</span></h1>
+  <p>Data Science Enthusiast</p>
+</div>
+
+<!-- Main Content -->
+<div id="mainContent">
+
+  <header id="hero">
+    <canvas id="bgCanvas"></canvas>
+    <div class="hero-content" data-aos="zoom-in">
+      <h1>Vattikuti Shivaram</h1>
+      <p>Data Science Enthusiast</p>
+      <a href="#contact" class="cta-button">Get in Touch</a>
+      <a href="resume 4.pdf" download class="cta-button">Download Resume</a>
+    </div>
+  </header>
+
+  <section id="about" data-aos="fade-up">
+    <h2>About Me</h2>
+    <p>Data Science enthusiast skilled in Python, SQL, and Machine Learning, delivering predictive models and dashboards for business insights. Certified by IBM, Cisco, and Simplilearn, I excel in data analysis and visualization. Eager to solve complex challenges as a Data Scientist.</p>
+  </section>
+
+  <section id="skills" data-aos="fade-up">
+    <h2>Technical Skills</h2>
+    <ul>
+      <li>Programming: Python (Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, NLTK), SQL
+        <div class="skill-bar"><div class="skill-progress" style="width: 90%;"></div></div>
+      </li>
+      <li>Visualization: Tableau, Power BI, Plotly Dash, Excel
+        <div class="skill-bar"><div class="skill-progress" style="width: 85%;"></div></div>
+      </li>
+      <li>Machine Learning: Linear/Logistic Regression, SVM, Decision Trees, KNN, Clustering
+        <div class="skill-bar"><div class="skill-progress" style="width: 80%;"></div></div>
+      </li>
+      <li>Advanced: Deep Learning (TensorFlow, Keras), NLP (Sentiment Analysis)
+        <div class="skill-bar"><div class="skill-progress" style="width: 75%;"></div></div>
+      </li>
+      <li>Tools: Jupyter Notebook, Google Colab, Git, GitHub, VS Code
+        <div class="skill-bar"><div class="skill-progress" style="width: 95%;"></div></div>
+      </li>
+    </ul>
+  </section>
+
+  <section id="projects" data-aos="fade-up">
+    <h2>Key Projects</h2>
+    <div>
+      <div class="project-card" onclick="openModal('project1')" data-aos="flip-left">
+        <h3>SpaceX Falcon 9 Launch Success Prediction</h3>
+        <p>Collected data via APIs, built ML models with 92% accuracy.</p>
+      </div>
+      <div class="project-card" onclick="openModal('project2')" data-aos="flip-left">
+        <h3>Superstore Sales Analysis</h3>
+        <p>EDA with Pandas, Tableau dashboards, improved marketing by 15%.</p>
+      </div>
+      <div class="project-card" onclick="openModal('project3')" data-aos="flip-left">
+        <h3>Automobile Sales Dashboard</h3>
+        <p>Power BI dashboards with DAX metrics.</p>
+      </div>
+      <div class="project-card" onclick="openModal('project4')" data-aos="flip-left">
+        <h3>Sentiment Analysis with NLP</h3>
+        <p>Built models with 85% accuracy using NLTK and LSTM.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="certifications" data-aos="fade-up">
+    <h2>Certifications</h2>
+    <ul>
+      <li>IBM Data Science Professional Certificate, Coursera</li>
+      <li>Power BI Certification, Simplilearn</li>
+      <li>Tableau Certification, Great Learning</li>
+      <li>Data Analytics Essentials, Cisco Networking Academy</li>
+    </ul>
+  </section>
+
+  <section id="education" data-aos="fade-up">
+    <h2>Education</h2>
+    <p>B.Tech, Electronics and Communication Engineering, Gurunanak Institute of Technology, JNTU</p>
+    <p>CGPA: 7.0/10, 2023</p>
+    <p>Relevant Coursework: Data Structures, Statistics, Signal Processing</p>
+  </section>
+
+  <section id="volunteering" data-aos="fade-up">
+    <h2>Volunteering</h2>
+    <p>Fundraising Volunteer, Street Cause GNI</p>
+    <ul>
+      <li>Raised 50,000+ for education of 20+ children.</li>
+      <li>Gained communication and event planning skills.</li>
+      <li>Secured corporate and community donations.</li>
+    </ul>
+  </section>
+
+  <section id="contact" data-aos="fade-up">
+    <h2>Contact</h2>
+    <form action="mailto:shivaramvattikuti@gmail.com" method="post" enctype="text/plain">
+      <input type="text" name="name" placeholder="Your Name" required />
+      <input type="email" name="email" placeholder="Your Email" required />
+      <textarea name="message" placeholder="Your Message" required></textarea>
+      <button type="submit" class="cta-button">Send Message</button>
+    </form>
+    <p>Email: shivaramvattikuti@gmail.com</p>
+    <p>Phone: +91-9391039862</p>
+    <p>Location: Hyderabad, India</p>
+    <p><a href="https://linkedin.com/in/vattikutishivaram" style="color:#FFD700;" target="_blank" rel="noopener noreferrer">LinkedIn</a> | <a href="https://github.com/Vshivaram" style="color:#FFD700;" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Vattikuti Shivaram. All rights reserved.</p>
+  </footer>
+
+  <!-- Modals -->
+  <div id="project1" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('project1')">&times;</span>
+      <h3>SpaceX Falcon 9 Launch Success Prediction</h3>
+      <ul>
+        <li>Collected launch data via APIs, web scraping with BeautifulSoup.</li>
+        <li>Performed EDA with Pandas, Matplotlib, Seaborn.</li>
+        <li>Built ML models (Logistic Regression, SVM, KNN), 92% accuracy.</li>
+        <li>Created Plotly Dash dashboard for visualization.</li>
+      </ul>
+    </div>
+  </div>
+  <div id="project2" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('project2')">&times;</span>
+      <h3>Superstore Sales Analysis</h3>
+      <ul>
+        <li>Conducted EDA with Pandas for sales and customer insights.</li>
+        <li>Designed Tableau dashboards, improved marketing by 15%.</li>
+        <li>Identified key product and regional sales trends.</li>
+      </ul>
+    </div>
+  </div>
+  <div id="project3" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('project3')">&times;</span>
+      <h3>Automobile Sales Dashboard</h3>
+      <ul>
+        <li>Built Power BI dashboards for sales across years, regions.</li>
+        <li>Used DAX for year-over-year growth metrics.</li>
+        <li>Enabled monitoring with dynamic filters.</li>
+      </ul>
+    </div>
+  </div>
+  <div id="project4" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('project4')">&times;</span>
+      <h3>Sentiment Analysis with NLP</h3>
+      <ul>
+        <li>Preprocessed text with NLTK, spaCy for classification.</li>
+        <li>Built Naive Bayes, LSTM models, 85% accuracy.</li>
+        <li>Optimized with TF-IDF and hyperparameter tuning.</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- AOS JS -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<!-- Three.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.155/build/three.min.js"></script>
+
+<script>
+  // After 3 seconds, fade out splash and show main content
+  window.onload = () => {
+    setTimeout(() => {
+      const splash = document.getElementById('entrySplash');
+      splash.classList.add('hidden');
+
+      const main = document.getElementById('mainContent');
+      main.classList.add('show');
+      AOS.init();
+    }, 3000); // 3 seconds
+  };
+
+  // Three.js background particles
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bgCanvas'), alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesCount = window.innerWidth > 768 ? 500 : 200;
+  const posArray = new Float32Array(particlesCount * 3);
+  for(let i=0; i<particlesCount*3; i++){
+    posArray[i] = (Math.random() - 0.5) * 10;
+  }
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+  const material = new THREE.PointsMaterial({ size: 0.03, color: '#00C4FF' });
+  const particlesMesh = new THREE.Points(particlesGeometry, material);
+  scene.add(particlesMesh);
+
+  camera.position.z = 5;
+
+  function animate(){
+    requestAnimationFrame(animate);
+    particlesMesh.rotation.y += 0.001;
+    particlesMesh.rotation.x += 0.0005;
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  // Modal open/close
+  function openModal(id){
+    document.getElementById(id).style.display = 'flex';
+  }
+  function closeModal(id){
+    document.getElementById(id).style.display = 'none';
+  }
+
+  // Animate skill bars on scroll
+  const skillProgress = document.querySelectorAll('.skill-progress');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.style.width = entry.target.getAttribute('style').match(/width:\s*(\d+)%/)[1] + '%';
+      }
+    });
+  });
+  skillProgress.forEach(bar => observer.observe(bar));
+</script>
+
+</body>
+</html>
